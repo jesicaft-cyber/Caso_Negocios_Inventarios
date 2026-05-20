@@ -1,0 +1,938 @@
+{
+  "datasets": [
+    {
+      "name": "price_tier_analysis",
+      "displayName": "Price Tier Analysis",
+      "queryLines": [
+        "SELECT\n",
+        "  price_tier,\n",
+        "  season,\n",
+        "  SUM(total_revenue) as revenue,\n",
+        "  AVG(gross_margin) as avg_margin,\n",
+        "  SUM(units_sold) as units\n",
+        "FROM\n",
+        "  workspace.default.clothes_silver_layer\n",
+        "GROUP BY\n",
+        "  price_tier,\n",
+        "  season\n",
+        "ORDER BY\n",
+        "  price_tier,\n",
+        "  season"
+      ]
+    },
+    {
+      "name": "season_category_metrics",
+      "displayName": "Season Category Metrics",
+      "queryLines": [
+        "SELECT\n",
+        "  season,\n",
+        "  category,\n",
+        "  SUM(units_sold) as total_units,\n",
+        "  SUM(total_revenue) as total_revenue,\n",
+        "  SUM(total_gross_profit) as total_profit,\n",
+        "  AVG(gross_margin) as avg_margin,\n",
+        "  AVG(rating) as avg_rating,\n",
+        "  COUNT(DISTINCT product_id) as sku_count\n",
+        "FROM\n",
+        "  workspace.default.clothes_silver_layer\n",
+        "GROUP BY\n",
+        "  season,\n",
+        "  category\n",
+        "ORDER BY\n",
+        "  season,\n",
+        "  total_units DESC"
+      ]
+    },
+    {
+      "name": "monthly_trends",
+      "displayName": "Monthly Trends",
+      "queryLines": [
+        "SELECT\n",
+        "  DATE_FORMAT(sale_date_ts, 'yyyy-MM') as month_label,\n",
+        "  season,\n",
+        "  SUM(total_revenue) as monthly_revenue,\n",
+        "  SUM(units_sold) as monthly_units\n",
+        "FROM\n",
+        "  workspace.default.clothes_silver_layer\n",
+        "GROUP BY\n",
+        "  DATE_FORMAT(sale_date_ts, 'yyyy-MM'),\n",
+        "  season\n",
+        "ORDER BY\n",
+        "  month_label"
+      ]
+    },
+    {
+      "name": "color_preferences",
+      "displayName": "Color Preferences",
+      "queryLines": [
+        "SELECT\n",
+        "  color,\n",
+        "  SUM(units_sold) as total_units,\n",
+        "  SUM(total_revenue) as total_revenue\n",
+        "FROM\n",
+        "  workspace.default.clothes_silver_layer\n",
+        "GROUP BY\n",
+        "  color\n",
+        "ORDER BY\n",
+        "  total_units DESC\n",
+        "LIMIT 12"
+      ]
+    },
+    {
+      "name": "gender_segment",
+      "displayName": "Gender Segment Analysis",
+      "queryLines": [
+        "SELECT\n",
+        "  gender,\n",
+        "  price_tier,\n",
+        "  SUM(total_revenue) as total_revenue\n",
+        "FROM\n",
+        "  workspace.default.clothes_silver_layer\n",
+        "GROUP BY\n",
+        "  gender,\n",
+        "  price_tier\n",
+        "ORDER BY\n",
+        "  gender,\n",
+        "  price_tier"
+      ]
+    },
+    {
+      "name": "brand_performance",
+      "displayName": "Brand Performance",
+      "queryLines": [
+        "SELECT\n",
+        "  brand,\n",
+        "  SUM(total_revenue) as total_revenue,\n",
+        "  AVG(gross_margin) as avg_margin,\n",
+        "  AVG(rating) as avg_rating\n",
+        "FROM\n",
+        "  workspace.default.clothes_silver_layer\n",
+        "GROUP BY\n",
+        "  brand\n",
+        "ORDER BY\n",
+        "  total_revenue DESC"
+      ]
+    },
+    {
+      "name": "category_profit",
+      "displayName": "Category Profit",
+      "queryLines": [
+        "SELECT\n",
+        "  category,\n",
+        "  SUM(total_gross_profit) as total_profit\n",
+        "FROM\n",
+        "  workspace.default.clothes_silver_layer\n",
+        "GROUP BY\n",
+        "  category\n",
+        "ORDER BY\n",
+        "  total_profit DESC"
+      ]
+    },
+    {
+      "name": "category_rating",
+      "displayName": "Category Rating",
+      "queryLines": [
+        "SELECT\n",
+        "  category,\n",
+        "  AVG(rating) as avg_rating\n",
+        "FROM\n",
+        "  workspace.default.clothes_silver_layer\n",
+        "GROUP BY\n",
+        "  category\n",
+        "ORDER BY\n",
+        "  avg_rating DESC"
+      ]
+    },
+    {
+      "name": "quarterly_units",
+      "displayName": "Quarterly Units",
+      "queryLines": [
+        "SELECT\n",
+        "  year,\n",
+        "  quarter,\n",
+        "  CONCAT(CAST(year AS STRING), ' ', quarter) as period,\n",
+        "  SUM(units_sold) as total_units\n",
+        "FROM\n",
+        "  workspace.default.clothes_silver_layer\n",
+        "GROUP BY\n",
+        "  year,\n",
+        "  quarter\n",
+        "ORDER BY\n",
+        "  year,\n",
+        "  quarter"
+      ]
+    },
+    {
+      "name": "scatter_price_margin",
+      "displayName": "Price vs Margin Scatter",
+      "queryLines": [
+        "SELECT\n",
+        "  sale_price,\n",
+        "  gross_margin,\n",
+        "  price_tier\n",
+        "FROM\n",
+        "  workspace.default.clothes_silver_layer\n",
+        "ORDER BY\n",
+        "  RAND()\n",
+        "LIMIT 1200"
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "name": "1a9c1aa5",
+      "displayName": "Mayo 17 2026",
+      "layout": [
+        {
+          "widget": {
+            "name": "categories_by_season",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "season_category_metrics",
+                  "fields": [
+                    {
+                      "name": "season",
+                      "expression": "`season`"
+                    },
+                    {
+                      "name": "category",
+                      "expression": "`category`"
+                    },
+                    {
+                      "name": "sum(total_units)",
+                      "expression": "SUM(`total_units`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Unidades por Categoría y Temporada"
+              },
+              "mark": {
+                "colors": [
+                  "#66BB6A",
+                  "#FFA726",
+                  "#EF5350",
+                  "#42A5F5"
+                ],
+                "layout": "group"
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "category",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(total_units)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "season",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 11,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "monthly_revenue_trend",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "monthly_trends",
+                  "fields": [
+                    {
+                      "name": "season",
+                      "expression": "`season`"
+                    },
+                    {
+                      "name": "month_label",
+                      "expression": "`month_label`"
+                    },
+                    {
+                      "name": "sum(monthly_revenue)",
+                      "expression": "SUM(`monthly_revenue`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Tendencia Mensual de Ingresos"
+              },
+              "mark": {
+                "colors": [
+                  "#66BB6A",
+                  "#FFA726",
+                  "#EF5350",
+                  "#42A5F5"
+                ]
+              },
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "month_label",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(monthly_revenue)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "season",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 5,
+            "width": 11,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "top_colors",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "color_preferences",
+                  "fields": [
+                    {
+                      "name": "color",
+                      "expression": "`color`"
+                    },
+                    {
+                      "name": "sum(total_revenue)",
+                      "expression": "SUM(`total_revenue`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Colores Más Vendidos"
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "color",
+                  "scale": {
+                    "type": "categorical",
+                    "categorySize": {
+                      "type": "number-of-categories",
+                      "number": 7
+                    }
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(total_revenue)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "color",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 5,
+            "y": 26,
+            "width": 7,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "revenue_by_category_season",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "season_category_metrics",
+                  "fields": [
+                    {
+                      "name": "season",
+                      "expression": "`season`"
+                    },
+                    {
+                      "name": "category",
+                      "expression": "`category`"
+                    },
+                    {
+                      "name": "sum(total_revenue)",
+                      "expression": "SUM(`total_revenue`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Ingresos por Categoría y Temporada"
+              },
+              "mark": {
+                "colors": [
+                  "#66BB6A",
+                  "#FFA726",
+                  "#EF5350",
+                  "#42A5F5"
+                ]
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "category",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(total_revenue)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "season",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 10,
+            "width": 11,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "price_margin_scatter",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "scatter_price_margin",
+                  "fields": [
+                    {
+                      "name": "price_tier",
+                      "expression": "`price_tier`"
+                    },
+                    {
+                      "name": "sale_price",
+                      "expression": "`sale_price`"
+                    },
+                    {
+                      "name": "gross_margin",
+                      "expression": "`gross_margin`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Precio vs Margen"
+              },
+              "mark": {
+                "colors": [
+                  "#81C784",
+                  "#FFB74D",
+                  "#E57373",
+                  "#7E57C2"
+                ]
+              },
+              "widgetType": "scatter",
+              "encodings": {
+                "x": {
+                  "fieldName": "sale_price",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "y": {
+                  "fieldName": "gross_margin",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "price_tier",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 31,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "revenue_by_price_tier",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "price_tier_analysis",
+                  "fields": [
+                    {
+                      "name": "season",
+                      "expression": "`season`"
+                    },
+                    {
+                      "name": "price_tier",
+                      "expression": "`price_tier`"
+                    },
+                    {
+                      "name": "sum(revenue)",
+                      "expression": "SUM(`revenue`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Ingresos por Tier y Temporada"
+              },
+              "version": 3,
+              "mark": {
+                "colors": [
+                  "#66BB6A",
+                  "#FFA726",
+                  "#EF5350",
+                  "#42A5F5"
+                ],
+                "layout": "group"
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "price_tier",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(revenue)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "season",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 16,
+            "width": 11,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "revenue_by_gender",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "gender_segment",
+                  "fields": [
+                    {
+                      "name": "price_tier",
+                      "expression": "`price_tier`"
+                    },
+                    {
+                      "name": "gender",
+                      "expression": "`gender`"
+                    },
+                    {
+                      "name": "sum(total_revenue)",
+                      "expression": "SUM(`total_revenue`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Ingresos por Género y Tier"
+              },
+              "version": 3,
+              "mark": {
+                "colors": [
+                  "#81C784",
+                  "#FFB74D",
+                  "#E57373",
+                  "#7E57C2"
+                ],
+                "layout": "stack"
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "gender",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(total_revenue)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "price_tier",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 26,
+            "width": 5,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "top_brands",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "brand_performance",
+                  "fields": [
+                    {
+                      "name": "brand",
+                      "expression": "`brand`"
+                    },
+                    {
+                      "name": "sum(total_revenue)",
+                      "expression": "SUM(`total_revenue`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": "Marcas Líderes"
+              },
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "sum(total_revenue)",
+                  "scale": {
+                    "type": "quantitative",
+                    "reverse": false
+                  }
+                },
+                "y": {
+                  "fieldName": "brand",
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "x-reversed"
+                    }
+                  }
+                },
+                "color": {
+                  "fieldName": "brand",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 31,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "top_categories_profit",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "category_profit",
+                  "fields": [
+                    {
+                      "name": "category",
+                      "expression": "`category`"
+                    },
+                    {
+                      "name": "sum(total_profit)",
+                      "expression": "SUM(`total_profit`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Top Categorías por Utilidad Bruta"
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "category",
+                  "scale": {
+                    "type": "categorical",
+                    "categorySize": {
+                      "type": "number-of-categories",
+                      "number": 7
+                    },
+                    "sort": {
+                      "by": "natural-order"
+                    }
+                  }
+                },
+                "y": {
+                  "primary": {
+                    "fields": [
+                      {
+                        "fieldName": "sum(total_profit)"
+                      }
+                    ],
+                    "scale": {
+                      "type": "quantitative"
+                    }
+                  },
+                  "secondary": {
+                    "fields": [],
+                    "scale": {
+                      "type": "quantitative"
+                    }
+                  }
+                },
+                "label": {
+                  "show": false
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 21,
+            "width": 11,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "categories_by_rating",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "category_rating",
+                  "fields": [
+                    {
+                      "name": "category",
+                      "expression": "`category`"
+                    },
+                    {
+                      "name": "avg_rating",
+                      "expression": "`avg_rating`"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Categorías por Calificación Promedio"
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "category",
+                  "axis": {
+                    "labelAngle": 0
+                  },
+                  "scale": {
+                    "type": "categorical",
+                    "categorySize": {
+                      "type": "number-of-categories",
+                      "number": 7
+                    }
+                  }
+                },
+                "y": {
+                  "fieldName": "avg_rating",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 1,
+            "y": 37,
+            "width": 10,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "units_by_quarter",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "quarterly_units",
+                  "fields": [
+                    {
+                      "name": "sum(total_units)",
+                      "expression": "SUM(`total_units`)"
+                    },
+                    {
+                      "name": "period",
+                      "expression": "`period`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "showTitle": true,
+                "title": "Unidades Vendidas por Trimestre"
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "period",
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "natural-order"
+                    }
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(total_units)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "sum(total_units)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              }
+            }
+          },
+          "position": {
+            "x": 1,
+            "y": 42,
+            "width": 11,
+            "height": 7
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "widgetHeaderAlignment": "ALIGNMENT_UNSPECIFIED"
+    },
+    "applyModeEnabled": false
+  }
+}
